@@ -5,11 +5,15 @@ import requests
 import asyncio
 client=discord.Client()
 
+###################### INPUT ############################
 ip="127.0.0.1"
 port=2424
 WebhookName="TestHook"
-channel_id=719316097907556393
-steam_api="013E39D266CAFAFF6347FD2C7AAC1D80"
+channel_id=
+steam_api=""
+YourDiscordBotToken=""
+#########################################################
+
 bStatusConnected=False
 webhook=None
 GlobalReader=None
@@ -157,5 +161,5 @@ async def on_message(message):
 
 if __name__ == '__main__':
 
-    client.run('NzE5MTY1OTIyNDcxODM3NzY3.XtzddQ.LuJMq6lNx6EQHXpO7IjBacGzAlw')
+    client.run(YourDiscordBotToken)
 
