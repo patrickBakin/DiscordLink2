@@ -12,7 +12,7 @@ port=2424
 WebhookName="Obedient Cyst"
 channel_id=
 steam_api=""
-DefaultAvatar="https://s.isanook.com/mv/0/rp/rc/w850h510/yatxacm1w0/aHR0cHM6Ly9zLmlzYW5vb2suY29tL212LzAvdWQvMjEvMTA5MjI1LzEwOTIyNS10aHVtYm5haWwuanBn.jpg"
+DefaultAvatar="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.deviantart.com%2Fsaltpowered%2Fart%2FKilling-Floor-2-Cyst-Summer-Event-for-XPS-693066884&psig=AOvVaw3agVyg_PK9AWm0eR9zvwdy&ust=1648919647789000&source=images&cd=vfe&ved=0CAsQjRxqFwoTCOjQsMKu8_YCFQAAAAAdAAAAABAD"
 CDAvatar="https://steamuserimages-a.akamaihd.net/ugc/82590902456917524/12367220192C665A9BC800873A5B74EFE93FCE73/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
 ###########################################################################
 
