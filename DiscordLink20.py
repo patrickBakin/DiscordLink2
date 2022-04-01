@@ -5,21 +5,21 @@ import requests
 import asyncio
 client=discord.Client()
 
-###################### INPUT ############################
+################################## INPUT ##################################
+YourBotToken=''
 ip="127.0.0.1"
 port=2424
-WebhookName="TestHook"
+WebhookName="Obedient Cyst"
 channel_id=
 steam_api=""
-YourDiscordBotToken=""
-#########################################################
+DefaultAvatar="https://s.isanook.com/mv/0/rp/rc/w850h510/yatxacm1w0/aHR0cHM6Ly9zLmlzYW5vb2suY29tL212LzAvdWQvMjEvMTA5MjI1LzEwOTIyNS10aHVtYm5haWwuanBn.jpg"
+CDAvatar="https://steamuserimages-a.akamaihd.net/ugc/82590902456917524/12367220192C665A9BC800873A5B74EFE93FCE73/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
+###########################################################################
 
 bStatusConnected=False
 webhook=None
 GlobalReader=None
 GlobalWriter=None
-DefaultAvatar="https://s.isanook.com/mv/0/rp/rc/w850h510/yatxacm1w0/aHR0cHM6Ly9zLmlzYW5vb2suY29tL212LzAvdWQvMjEvMTA5MjI1LzEwOTIyNS10aHVtYm5haWwuanBn.jpg"
-
 
 class ReceiveChat:
     def __init__(self,webhook,ip,port,steam_api):
@@ -44,29 +44,31 @@ class ReceiveChat:
         bStatusConnected=True
         print("connected")
         await self.HandleMessage()
-        #loop = asyncio.get_event_loop()
-       # loop.run_until_complete(self.HandleMessage())
+
 
 
     async def HandleMessage(self):
         global bStatusConnected
 
-        data = None
+        data = b''
         while True:
             print(0)
 
-            data = await self.reader.read(1024)
+            data += bytearray(await self.reader.read(1024))
             if data==bytes():
                 break
-           # data = self.client.recv(1024)
-            print(1)
+            if self.CheckEndMessage(data.decode('utf-8'))!=True:
+                #print(self.decodedata(data.decode('utf-8')))
+                continue
+
             SteamID, username, content, AvatarURL = self.GetPlayerMessageInfo(data)
-            print(2)
+            data = b''
             print(SteamID, username, content, AvatarURL)
             if len(AvatarURL) == 0 or SteamID == 0:
                 AvatarURL = DefaultAvatar
-            # client.loop.create_task(self.webhook.send(content=content, username=username, avatar_url=AvatarURL, wait=False))
+
             await   self.webhook.send(content=content, username=username, avatar_url=AvatarURL, wait=True)
+
 
         print("Reconnecting...")
         bStatusConnected = False
@@ -81,6 +83,12 @@ class ReceiveChat:
                     await asyncio.sleep(1)
         return
 
+    def CheckEndMessage(self,Msg):
+        try:
+            if(self.decodedata(Msg)[-5:] == "<<end"):
+                return True
+        except:
+            return False
     @staticmethod
     async def SendMessages(GW,webhook,Msg):
         if(bStatusConnected==False):
@@ -91,12 +99,15 @@ class ReceiveChat:
         await GW.drain()
 
     def GetPlayerMessageInfo(self,data):
+        #print("Data ",data.decode('utf-8'))
         Raw=self.decodedata(data.decode('utf-8'))
-        print(Raw)
+        #print(Raw)
         Rawarr= Raw.split(':')
+        if(Rawarr[0]=="CDC"):
+            return 1,Rawarr[1],Rawarr[2][:-5],CDAvatar
         SteamID=int(Rawarr[0],16)
         username=Rawarr[1]
-        content=Rawarr[2]
+        content=Rawarr[2][:-5]
         try:
             r = requests.get(url=f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={self.steam_api}&steamids={SteamID}")
         except Exception as E:
@@ -137,10 +148,7 @@ async def on_ready():
                 webhook = await channel.create_webhook(name=WebhookName)
         if(webhook!=None):
             await ReceiveChat(webhook, "127.0.0.1", 2424, steam_api).Connect()
-          # ReceiveChatClass=ReceiveChat(webhook,"127.0.0.1",2424,steam_api)
-          # thread= threading.Thread(target=ReceiveChatClass.Connect)
-         #  thread.start()
-           #ReceiveChat(webhook,"127.0.0.1",2424,steam_api).Connect()
+
         else:
             print("Error Webhook None")
 
@@ -149,7 +157,7 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-        # we do not want the bot to reply to itself
+
         if message.author == client.user:
             return
 
@@ -161,5 +169,5 @@ async def on_message(message):
 
 if __name__ == '__main__':
 
-    client.run(YourDiscordBotToken)
+    client.run(YourBotToken)
 
