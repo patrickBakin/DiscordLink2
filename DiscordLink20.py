@@ -29,6 +29,7 @@ class ReceiveChat:
         self.steam_api=steam_api
         self.reader=None
         self.writer=None
+        self.datacache=[]
     async def Connect(self):
         global bStatusConnected,GlobalReader,GlobalWriter
         while True:
@@ -57,11 +58,12 @@ class ReceiveChat:
             data += bytearray(await self.reader.read(1024))
             if data==bytes():
                 break
-            if self.CheckEndMessage(data.decode('utf-8'))!=True:
+
+            if data.decode('utf-8')[-17:]!="60/60/101/110/100":
                 #print(self.decodedata(data.decode('utf-8')))
                 continue
 
-            SteamID, username, content, AvatarURL = self.GetPlayerMessageInfo(data)
+            SteamID, username, content, AvatarURL = await self.GetPlayerMessageInfo(data)
             data = b''
             print(SteamID, username, content, AvatarURL)
             if len(AvatarURL) == 0 or SteamID == 0:
@@ -83,12 +85,6 @@ class ReceiveChat:
                     await asyncio.sleep(1)
         return
 
-    def CheckEndMessage(self,Msg):
-        try:
-            if(self.decodedata(Msg)[-5:] == "<<end"):
-                return True
-        except:
-            return False
     @staticmethod
     async def SendMessages(GW,webhook,Msg):
         if(bStatusConnected==False):
@@ -98,22 +94,25 @@ class ReceiveChat:
         GW.write(Msg.encode('utf-8'))
         await GW.drain()
 
-    def GetPlayerMessageInfo(self,data):
+    async def GetPlayerMessageInfo(self,data):
         #print("Data ",data.decode('utf-8'))
         Raw=self.decodedata(data.decode('utf-8'))
         #print(Raw)
-        Rawarr= Raw.split(':')
+        Rawarr= Raw.split('^$')
         if(Rawarr[0]=="CDC"):
             return 1,Rawarr[1],Rawarr[2][:-5],CDAvatar
         SteamID=int(Rawarr[0],16)
         username=Rawarr[1]
         content=Rawarr[2][:-5]
         try:
-            r = requests.get(url=f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={self.steam_api}&steamids={SteamID}")
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f'https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={self.steam_api}&steamids={SteamID}') as resp:
+            #r = requests.get(url=f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={self.steam_api}&steamids={SteamID}")
+                    r= await resp.json()
         except Exception as E:
             print("Error: ", str(E))
         try:
-            AvatarURL=r.json()['response']['players'][0]['avatar']
+            AvatarURL=r['response']['players'][0]['avatar']
         except:
             AvatarURL=""
         return SteamID,username,content,AvatarURL
@@ -126,6 +125,7 @@ class ReceiveChat:
         for numi in range(len(numarray)):
             Text = Text + chr(int(numarray[numi]))
         return Text
+
 
 
 @client.event
