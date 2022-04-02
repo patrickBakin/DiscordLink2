@@ -6,12 +6,13 @@ import asyncio
 client=discord.Client()
 
 ################################## INPUT ##################################
-YourBotToken=''
-ip="127.0.0.1"
-port=2424
-WebhookName="Obedient Cyst"
-channel_id=
-steam_api=""
+YourBotToken='' # Your Discord bot token, you can get this from discord dev page
+ip="127.0.0.1"  # Your Server IpAddress. if you're running on the same machine as your server, then leave this line
+port=2424       # Same port which you set it in the config file
+WebhookName="Obedient Cyst" # Your Webhook name, can be whatever bllablbl
+channel_id=                 # Your active discord channel id which you want the messages to appear on
+steam_api=""                # Your Steam API you can get it from https://steamcommunity.com/dev/apikey
+#Default Avatar and CDAvatar are the url to the image that bot uses as an avatar. CDAvatar is optional, you can leave this if your server is not running CD
 DefaultAvatar="https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/i/672ca642-b9c2-4dc7-9dd6-fde34890ed10/dbgmttw-42b21204-ce10-4da6-aa52-2fb99e5bd0fc.png/v1/fill/w_700,h_700,q_80,strp/killing_floor_2_cyst_summer_event_for_xps_by_saltpowered_dbgmttw-fullview.jpg"
 CDAvatar="https://steamuserimages-a.akamaihd.net/ugc/82590902456917524/12367220192C665A9BC800873A5B74EFE93FCE73/?imw=512&&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false"
 ###########################################################################
