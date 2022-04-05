@@ -1,7 +1,7 @@
 import discord
 
 import requests
-
+import aiohttp
 import asyncio
 client=discord.Client()
 
